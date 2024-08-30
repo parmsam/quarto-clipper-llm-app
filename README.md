@@ -6,7 +6,7 @@ It will summarize the webpage text and generate flashcards or quiz questions in 
 
 ## Setup
 
-The app expects that you have an OpenAI API key that you can paste into the input box. You can get one by visting the [OpenAI API quickstart page](https://platform.openai.com/docs/quickstart/).
+The app expects that you have an OpenAI API key that you can paste into the input box. You can get one by visting the OpenAI API [quickstart page](https://platform.openai.com/docs/quickstart/).
 
 ## Dependencies
 

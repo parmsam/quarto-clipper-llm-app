@@ -11,12 +11,12 @@ model_options = ["gpt-3.5-turbo", "gpt-4o-mini", "gpt-4o",]
 
 app_info = """
 This app converts webpage content into a Quarto document using OpenAI's GPT-4o-mini model (by default). 
-Enter the URL of the webpage and your OpenAI API key to get started. 
-You can also select a different OpenAI model if needed. You will need my [quarto-flashcards](https://github.com/parmsam/quarto-flashcards/) and  [quarto-quiz](https://github.com/parmsam/quarto-quiz) extension depending on the output type.
+Enter the URL of the webpage and your OpenAI API key to get started. You can get an API key by visting the OpenAI API [quickstart page](https://platform.openai.com/docs/quickstart/).
+You can also select a different OpenAI model if needed. You will need my [quarto-flashcards](https://github.com/parmsam/quarto-flashcards/) and  [quarto-quiz](https://github.com/parmsam/quarto-quiz) extension on your laptop depending on the output type.
 """
 
 quarto_templates = {
-    "Quarto HTML document": """
+    "Quarto html": """
         ---
         title: "Untitled"
         format: html
@@ -31,7 +31,7 @@ quarto_templates = {
         ## Code Embedding
 
         Include code snippets using fenced code blocks and maintain any original formatting. Ensure all images and links are correctly referenced in the document.""",
-    "Quarto PDF document": """
+    "Quarto pdf": """
         ---
         title: "My document"
         format:
@@ -165,12 +165,12 @@ app_ui = ui.page_fluid(
             ui.input_text("url", "Enter webpage URL:", value = test_url),
             ui.input_select("selected_template", "Select Quarto output type:",
                             choices = list(quarto_templates.keys()),
-                            selected = "Quarto HTML document"),
+                            selected = "Quarto html"),
             ui.input_action_button("convert", "Convert to Quarto"),
             open="always",
         ),
         ui.panel_title("Quarto Clipper"),
-        ui.strong(ui.em("a webpage to quarto converter using large language models")),
+        ui.strong(ui.em("a webpage to quarto converter using openai large language models")),
         ui.markdown(app_info),
         ui.download_button("download", "Download Quarto File"),
         ui.output_text_verbatim("quarto_output"),
