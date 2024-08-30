@@ -4,14 +4,16 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import asyncio
+import fitz
 
 api_key1 = os.getenv("OPENAI_API_KEY")
+api_key1 = ""
 test_url = "https://posit.co/blog/announcing-the-2024-shiny-contest/"
 model_options = ["gpt-3.5-turbo", "gpt-4o-mini", "gpt-4o",]
 
 app_info = """
-This app converts webpage content into a Quarto document using OpenAI's GPT-4o-mini model (by default). 
-Enter the URL of the webpage and your OpenAI API key to get started. You can get an API key by visting the OpenAI API [quickstart page](https://platform.openai.com/docs/quickstart/).
+This app converts webpage or pdf content into a Quarto document using OpenAI's GPT-4o-mini model (by default). 
+Enter the URL of the webpage or pdf and your OpenAI API key to get started. You can get an API key by visting the OpenAI API [quickstart page](https://platform.openai.com/docs/quickstart/).
 You can also select a different OpenAI model if needed. You will need my [quarto-flashcards](https://github.com/parmsam/quarto-flashcards/) and  [quarto-quiz](https://github.com/parmsam/quarto-quiz) extension on your laptop depending on the output type.
 """
 
@@ -193,16 +195,29 @@ def server(input, output, session):
         
         if url and api_key:
             client = OpenAI(api_key=api_key)
-            # Fetch webpage content
-            response = requests.get(url)
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Extract text content
-            text_content = soup.get_text()
+            # Fetch webpage content if it is not a PDF
+            if not url.endswith(".pdf" or ".PDF"):
+                content_type = "webpage"
+                response = requests.get(url)
+                soup = BeautifulSoup(response.text, 'html.parser')
+                # Extract text content
+                text_content = soup.get_text()
+            else:
+                # Handle PDF content
+                content_type = "pdf"
+                response = requests.get(url)
+                with open("temp.pdf", "wb") as f:
+                    f.write(response.content)
+                pdf_document = fitz.open("temp.pdf")
+                text_content = ""
+                for page_num in range(pdf_document.page_count):
+                    page = pdf_document.load_page(page_num)
+                    text_content += page.get_text()
+                pdf_document.close()
             
             llm_prompt.set([
                 {"role": "system", 
-                "content": f"""You are a highly proficient assistant tasked with converting webpage content into a structured Quarto document.
+                "content": f"""You are a highly proficient assistant tasked with converting {content_type} content into a structured Quarto document.
                 
                 Your primary focus is to extract the main content, avoiding any irrelevant sections such as navigation bars, footers, advertisements, or any extraneous links. 
                 The goal is to create a clean, well-formatted document using the Quarto format. Ensure you are adhering to the official Quarto file standard. 
@@ -212,16 +227,17 @@ def server(input, output, session):
                 {quarto_templates[input.selected_template()]}"""
                 },
                 {"role": "user", 
-                "content": f"""Please convert the following webpage content into a {input.selected_template()} (.qmd) file. 
+                "content": f"""Please convert the following {content_type} content into a {input.selected_template()} (.qmd) file. 
                 - Extract only the main article or body content, and avoid including navigation menus, footers, sidebars, or any non-essential elements.
                 - Ensure that the structure, headings, links, images, and any other relevant formatting are preserved according to Quarto standards.
                 - Ensure you're adhering to the provided Quarto template structure and formatting guidelines.
-                - Include the webpage URL in the Quarto metadata in the source_url parameter. 
-                - Summarize information instead if it is for the flashcards or a quiz output into the main points in that format. 
+                - Include the {content_type} URL in the Quarto metadata in the source_url parameter. 
+                - Summarize information instead if it is for the flashcards or a quiz output into the main points in that format.
+                - Do not summarize if using the HTML and PDF output types.
                 - Limit information to that which is important and relevant for a flashcard or quiz context, depending on what is picked.
                 - Ensure you dont start and end the file with the typical three markdown backquotes (```) as it is not needed for Quarto.
 
-                Webpage content: {text_content}"""}
+                {content_type} content: {text_content}"""}
             ])
 
             try:

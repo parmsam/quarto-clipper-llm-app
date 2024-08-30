@@ -10,7 +10,7 @@ The app expects that you have an OpenAI API key that you can paste into the inpu
 
 ## Accessing the app
 
-You can clone this repo and run the app locally by run the app locally or access the app via [Connect Cloud](https://connect.posit.cloud/) at the website link in the repository details (under "About").
+You can clone this repo and run the app locally by run the app locally or access the app via [Connect Cloud](https://connect.posit.cloud/) at the website link in the repository details (under "About"). You may need to create a Connect Cloud account to access the app.
 
 ## Dependencies
 
