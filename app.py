@@ -16,7 +16,7 @@ You can also select a different OpenAI model if needed. You will need my [quarto
 """
 
 quarto_templates = {
-    "Quarto document": """
+    "Quarto HTML document": """
         ---
         title: "Untitled"
         format: html
@@ -31,6 +31,45 @@ quarto_templates = {
         ## Code Embedding
 
         Include code snippets using fenced code blocks and maintain any original formatting. Ensure all images and links are correctly referenced in the document.""",
+    "Quarto PDF document": """
+        ---
+        title: "My document"
+        format:
+        pdf:
+            toc: true
+            number-sections: true
+            colorlinks: true
+        ---
+        
+        # In the morning
+
+        ## Getting up
+
+        - Turn off alarm
+        - Get out of bed
+
+        """,
+    "Quarto slides": """
+        ---
+        title: "Habits"
+        author: "John Doe"
+        format: revealjs
+        ---
+
+        # In the morning
+
+        ## Getting up
+
+        - Turn off alarm
+        - Get out of bed
+
+        ## Breakfast
+
+        - Eat eggs
+        - Drink coffee
+
+        # In the evening
+        """,
     "Quarto quiz": """
         ---
         title: "Multiple Choice Quiz Example"
@@ -126,14 +165,14 @@ app_ui = ui.page_fluid(
             ui.input_text("url", "Enter webpage URL:", value = test_url),
             ui.input_select("selected_template", "Select Quarto output type:",
                             choices = list(quarto_templates.keys()),
-                            selected = "Quarto document"),
+                            selected = "Quarto HTML document"),
             ui.input_action_button("convert", "Convert to Quarto"),
             open="always",
         ),
         ui.panel_title("Quarto Clipper"),
         ui.strong(ui.em("a webpage to quarto converter using large language models")),
         ui.markdown(app_info),
-        ui.download_button("download", "Download Quarto Document"),
+        ui.download_button("download", "Download Quarto File"),
         ui.output_text_verbatim("quarto_output"),
     )
 )
@@ -208,7 +247,7 @@ def server(input, output, session):
 
     @output
     @render.download(
-        filename=lambda: f"webpage_content_{hash(input.url())}.qmd",
+        filename=lambda: f"webpage_content{hash(input.url())}.qmd",
     )
     async def download():
         await asyncio.sleep(0.25)
