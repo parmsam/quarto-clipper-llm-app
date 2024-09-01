@@ -13,7 +13,9 @@ model_options = ["gpt-3.5-turbo", "gpt-4o-mini", "gpt-4o",]
 app_info = """
 This app converts webpage or pdf content into a Quarto document using OpenAI's GPT-4o-mini model (by default). 
 Enter the URL of the webpage or pdf and your OpenAI API key to get started. You can get an API key by visting the OpenAI API [quickstart page](https://platform.openai.com/docs/quickstart/).
-You can also select a different OpenAI model if needed. You will need my [quarto-flashcards](https://github.com/parmsam/quarto-flashcards/) and  [quarto-quiz](https://github.com/parmsam/quarto-quiz) extension on your laptop depending on the output type.
+You can also select a different OpenAI model if needed. 
+You will need the [quarto-flashcards](https://github.com/parmsam/quarto-flashcards/),  [quarto-quiz](https://github.com/parmsam/quarto-quiz), or 
+[quarto-live](https://github.com/r-wasm/quarto-live) extension on your Quarto project depending on the output type.
 """
 
 quarto_templates = {
@@ -151,6 +153,72 @@ quarto_templates = {
         $\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$
 
         where $y_i$ is the observed value and $\hat{y}_i$ is the predicted value.
+        :::
+        """,
+"Quarto live": """
+        ---
+        title: Quarto Live R Template
+        format: live-html
+        engine: knitr
+        webr:
+        packages:
+            - dplyr
+            - ggplot2
+        ---
+
+        {{< include _extensions/live/_knitr.qmd >}}
+
+        ## Interactive code blocks
+
+        ```{.webr}
+        library(ggplot2)
+        ggplot(mtcars, aes(hp, mpg)) +
+        geom_point() +
+        geom_smooth(formula = y ~ x, method = "loess")
+        ```
+
+
+        ## Interactive exercises
+
+        Take the `starwars` dataset and filter so that only characters of species "Droid" are returned.
+
+        ```{.webr}
+        #| caption: Sample Exercise
+        #| exercise: ex_1
+        starwars |> ______
+        ```
+
+        ```{.webr}
+        #| setup: true
+        #| exercise: ex_1
+        library(dplyr)
+        ```
+
+        ::::: { .hint exercise="ex_1"}
+        ::: { .callout-tip collapse="false"}
+        ## Hint 1
+
+        Consider using the `filter()` function from `dplyr`.
+
+        ```r
+        starwars |> filter(______)
+        ```
+        :::
+        :::::
+
+        ::: { .solution exercise="ex_1" }
+
+        **Fully worked solution:**
+
+        Use the `filter()` function from `dplyr`:
+
+        ```r
+        starwars |>                                 #<1>
+            filter(species == "Droid")              #<2>
+        ```
+        1. Take the `starwars` dataset, and then,
+        2. Filter for the "Droid" species.
+
         :::
         """
 }
