@@ -7,7 +7,6 @@ import asyncio
 import fitz
 
 api_key1 = os.getenv("OPENAI_API_KEY")
-api_key1 = ""
 test_url = "https://posit.co/blog/announcing-the-2024-shiny-contest/"
 model_options = ["gpt-3.5-turbo", "gpt-4o-mini", "gpt-4o",]
 
@@ -165,6 +164,9 @@ app_ui = ui.page_fluid(
                             choices = model_options, 
                             selected = "gpt-4o-mini"),
             ui.input_text("url", "Enter webpage URL:", value = test_url),
+            ui.input_select("extract_type", "Select extraction type:",
+                            choices = ["Text content", "Full content"],
+                            selected = "Text content"),
             ui.input_select("selected_template", "Select Quarto output type:",
                             choices = list(quarto_templates.keys()),
                             selected = "Quarto html"),
@@ -200,8 +202,12 @@ def server(input, output, session):
                 content_type = "webpage"
                 response = requests.get(url)
                 soup = BeautifulSoup(response.text, 'html.parser')
-                # Extract text content
-                text_content = soup.get_text()
+                if input.extract_type() == "Text content": 
+                    # Extract main text content
+                    text_content = soup.get_text()
+                elif input.extract_type() == "Full content":
+                    # Extract full content
+                    text_content = soup                
             else:
                 # Handle PDF content
                 content_type = "pdf"
