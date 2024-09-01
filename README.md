@@ -16,7 +16,9 @@ You can clone this repo and run the app locally by run the app locally or access
 
 ## Dependencies
 
-After downloading the Quarto file you generate, if you want to render out the flashcards or quiz file using Quarto, you'll need my [quarto-flashcards](https://github.com/parmsam/quarto-flashcards/) and  [quarto-quiz](https://github.com/parmsam/quarto-quiz) extension in your Quarto project.
+After downloading the Quarto file you generate, if you want to render out the flashcards or quiz file using Quarto, you'll may need the [quarto-flashcards](https://github.com/parmsam/quarto-flashcards/), [quarto-quiz](https://github.com/parmsam/quarto-quiz), 
+[quarto-live](https://github.com/r-wasm/quarto-live), or other extension in your Quarto project. 
+
 
 ## Adding templates for more output types
 
